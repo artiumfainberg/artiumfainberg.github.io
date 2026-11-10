@@ -1589,12 +1589,14 @@ body { background: #120e0b; }
   const saveCfg = () => store.set('cfg', CFG);
 
   // ---------- שפה ----------
-  let LANG = store.get('lang', 'he');
+  let LANG = store.get('lang2', 'ar');
   const tx = (o) => (o && typeof o === 'object' ? (o[LANG] || o.he || '') : (o ?? ''));
   const t = (k) => tx(D.UI[k]) || k;
+  const DEMO_TXT = { he: 'אתר לדוגמה שהוכן עבור לב הכפר · לא האתר הרשמי', ar: 'موقع تجريبي أُعدّ لمطعم لب الكفر · ليس الموقع الرسمي', en: 'Sample site made for Lev HaKfar · not the official site' };
   function applyLang() {
     document.documentElement.lang = LANG;
     document.documentElement.dir = LANG === 'en' ? 'ltr' : 'rtl';
+    const db = document.getElementById('demo-bar'); if (db) { db.textContent = DEMO_TXT[LANG] || DEMO_TXT.he; db.dir = LANG === 'en' ? 'ltr' : 'rtl'; }
   }
 
   // ---------- עזרים ----------
@@ -1673,7 +1675,7 @@ body { background: #120e0b; }
       <div><h4>${esc(t('nav_contact'))}</h4><p>${esc(tx(b.address))}</p>
         <p>${b.phone ? `<a href="tel:${digits(b.phone)}">${esc(b.phone)}</a>` : `<span class="pending">${esc(t('phone'))}: ${esc(t('pending_detail'))}</span>`}</p>
         <p>${b.email ? esc(b.email) : `<span class="pending">${esc(t('email'))}: ${esc(t('pending_detail'))}</span>`}</p></div>
-    </div><div class="foot-bottom"><span>© ${new Date().getFullYear()} LEV HAKFAR. ${esc(t('footer_rights'))} · אתר לדוגמה שהוכן עבור לב הכפר, לא האתר הרשמי</span>
+    </div><div class="foot-bottom"><span>© ${new Date().getFullYear()} LEV HAKFAR. ${esc(t('footer_rights'))} · ${esc(DEMO_TXT[LANG] || DEMO_TXT.he)}</span>
       <span><label class="check" style="font-size:13px"><input type="checkbox" id="fxToggle" ${FX_OFF ? 'checked' : ''}> ${esc(t('reduce_fx'))}</label></span>
       <a href="#admin">${esc(t('nav_admin'))}</a></div></div>`;
     $('#fxToggle').onchange = (e) => { FX_OFF = e.target.checked; store.set('fxoff', FX_OFF); document.documentElement.classList.toggle('fx-off', FX_OFF); };
@@ -2670,7 +2672,7 @@ body { background: #120e0b; }
     if (vc) { const lb = document.createElement('div'); lb.className = 'vlb'; lb.innerHTML = `<button class="icon-btn vlb-x" aria-label="${esc(t('close'))}">${ICON.x}</button><video src="${vc.dataset.vsrc}" controls autoplay playsinline loop></video>`; document.body.appendChild(lb); requestAnimationFrame(() => lb.classList.add('on'));
       lb.addEventListener('click', (ev) => { if (ev.target.tagName !== 'VIDEO') { lb.classList.remove('on'); setTimeout(() => lb.remove(), 400); } }); return; }
     const lang = e.target.closest('[data-lang]');
-    if (lang) { LANG = lang.dataset.lang; store.set('lang', LANG); applyLang(); renderChrome(); try { bindMotionBtn(); } catch (e) {} route(true); return; }
+    if (lang) { LANG = lang.dataset.lang; store.set('lang2', LANG); applyLang(); renderChrome(); try { bindMotionBtn(); } catch (e) {} route(true); return; }
     const fav = e.target.closest('[data-fav]');
     if (fav) { e.stopPropagation(); const id = fav.dataset.fav; const u = currentUser(); let list = favs(); list = list.includes(id) ? list.filter((x) => x !== id) : [...list, id]; if (u) { u.favs = list; saveUser(u); } else store.set('favs', list); fav.classList.toggle('on'); return; }
     const card = e.target.closest('[data-dish]');
